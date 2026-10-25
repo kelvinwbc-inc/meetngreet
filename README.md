@@ -1,17 +1,33 @@
-# 🇭🇰 Hong Kong Weather Tracker
+import requests
 
-A lightweight Python application that retrieves real-time weather information, forecast data, and warning signals directly from the **Hong Kong Observatory (HKO) Open Data API**.
+class HKOClient:
+    """Client for retrieving weather data from Hong Kong Observatory Open Data API."""
+    
+    BASE_URL = "https://data.weather.gov.hk/weatherAPI/opendata/weather.php"
 
-## 🚀 Features
+    def __init__(self, lang="tc"):
+        """
+        :param lang: Language code ('tc' for Traditional Chinese, 'sc' for Simplified Chinese, 'en' for English)
+        """
+        self.lang = lang
 
-- **Real-time Weather:** Fetches temperature, relative humidity, and regional weather data.
-- **Active Warnings:** Checks for active Typhoon, Rainstorm, Fire Danger, or Extreme Temperature warnings.
-- **9-Day Forecast:** Displays the general meteorological outlook for Hong Kong.
-- **Official Source:** Uses HKO's direct JSON API endpoints rather than web scraping for high stability.
+    def get_current_weather(self):
+        """Fetch current weather report including temperature, humidity, and warnings."""
+        params = {"dataType": "rwd", "lang": self.lang}
+        response = requests.get(self.BASE_URL, params=params)
+        response.raise_for_status()
+        return response.json()
 
-## 📦 Installation
+    def get_weather_forecast(self):
+        """Fetch 9-day weather forecast."""
+        params = {"dataType": "fnd", "lang": self.lang}
+        response = requests.get(self.BASE_URL, params=params)
+        response.raise_for_status()
+        return response.json()
 
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/your-username/hk-weather-tracker.git](https://github.com/your-username/hk-weather-tracker.git)
-   cd hk-weather-tracker
+    def get_weather_warnings(self):
+        """Fetch summary of weather warnings currently in force."""
+        params = {"dataType": "warnsum", "lang": self.lang}
+        response = requests.get(self.BASE_URL, params=params)
+        response.raise_for_status()
+        return response.json()
